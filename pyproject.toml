@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyBodyTrack"
+version = "2025.2.1"
+authors = [{name = "Angel Ruiz Zafra", email = "angelrzafra@gmail.com"}]
+description = "A Python package for multi-algorithm motion quantification and tracking in videos"
+readme = "README.md"
+license = {text = "MIT"}
+dependencies = ["numpy", "opencv-python", "scipy"]
+
+[project.urls]
+"Homepage" = "hhttps://github.com/bihut/pyBodyTrack"
+"Documentation" = "https://github.com/bihut/pyBodyTrack"
+"Source" = "https://github.com/bihut/pyBodyTrack"
