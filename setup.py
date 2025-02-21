@@ -4,7 +4,7 @@ setup(
     name="pyBodyTrack",
     version="2025.2.1",
     author="Angel Ruiz Zafra",
-    author_email="angelrzafra@gmail.com",
+    author_email="angelr@ugr.es",
     description="A Python package for multi-algorithm motion quantification and tracking in videos",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",

@@ -1,5 +1,7 @@
 import pandas as pd
 import datetime
+from typing import List, Dict, Optional
+
 
 class Utils:
     @staticmethod
@@ -54,6 +56,7 @@ class Utils:
         print(f"Removed invalid timestamp values: {removed_values}")
 
         return df_cleaned
+
     @staticmethod
     def get_subframes_list(df, interval):
         """
@@ -128,3 +131,33 @@ class Utils:
         except (ValueError, OSError) as e:
             print(f"Error converting timestamp: {e}")
             return None  # Return None if conversion fails
+
+    @staticmethod
+    def get_day_and_month(timestamp: float) -> tuple[int, int]:
+        """
+        Extracts the day and month from a timestamp.
+
+        Args:
+            timestamp (float): Unix timestamp in seconds.
+
+        Returns:
+            tuple[int, int]: A tuple containing the day and month as integers (day, month).
+        """
+        date_time = datetime.fromtimestamp(timestamp)
+        return date_time.day, date_time.month
+
+
+    @staticmethod
+    def get_object_by_key(objects: List[Dict], key: str) -> Optional[Dict]:
+        """
+        Retrieves an object from a list by its key.
+
+        Args:
+            objects (List[Dict]): A list of dictionaries with the structure
+                                  {"key": <key_value>, "values": []}.
+            key (str): The key to search for in the list.
+
+        Returns:
+            Optional[Dict]: The object with the specified key, or None if not found.
+        """
+        return next((obj for obj in objects if obj["key"] == key), None)
