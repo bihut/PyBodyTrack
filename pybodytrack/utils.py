@@ -1,7 +1,7 @@
 import pandas as pd
 import datetime
 from typing import List, Dict, Optional
-
+#source pybodytrack_env/bin/activate
 
 class Utils:
     @staticmethod

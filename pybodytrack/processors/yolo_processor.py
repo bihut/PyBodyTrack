@@ -1,37 +1,31 @@
 import cv2
 import numpy as np
-import pandas as pd
-import time
 
-
-class YOLOProcessor:
-    """Processor for YOLO-based human pose estimation."""
-
-    LANDMARKS = [
-        "NOSE", "LEFT_EYE", "RIGHT_EYE", "LEFT_SHOULDER", "RIGHT_SHOULDER",
-        "LEFT_ELBOW", "RIGHT_ELBOW", "LEFT_WRIST", "RIGHT_WRIST",
-        "LEFT_HIP", "RIGHT_HIP", "LEFT_KNEE", "RIGHT_KNEE",
-        "LEFT_ANKLE", "RIGHT_ANKLE"
-    ]
-
-    def __init__(self):
-        """Initialize YOLO model (to be implemented)."""
-        pass  # Replace with YOLO model loading
+class YoloProcessor:
+    def __init__(self, model_cfg="models/yolo/yolov4.cfg", model_weights="models/yolo/yolov4.weights"):
+        self.net = cv2.dnn.readNet(model_weights, model_cfg)
+        self.output_layers = self.net.getUnconnectedOutLayersNames()
 
     def process(self, frame):
-        """Simulated YOLO pose detection. Replace with real implementation."""
-        timestamp = time.time()
-        yolo_data = {
-            "NOSE": (0.4, 0.3, 0, 0.95),
-            "LEFT_EYE": (0.38, 0.28, 0, 0.90),
-            "RIGHT_EYE": (0.42, 0.28, 0, 0.92),
-            "LEFT_SHOULDER": (0.2, 0.5, 0, 0.88),
-            "RIGHT_SHOULDER": (0.8, 0.5, 0, 0.89)
-        }
+        height, width = frame.shape[:2]
+        blob = cv2.dnn.blobFromImage(frame, 1/255.0, (416, 416), swapRB=True, crop=False)
+        self.net.setInput(blob)
+        detections = self.net.forward(self.output_layers)
 
-        data = {lm: yolo_data.get(lm, (np.nan, np.nan, np.nan, np.nan)) for lm in self.LANDMARKS}
-        df = pd.DataFrame.from_dict(data, orient="index", columns=["x", "y", "z", "confidence"])
-        df.index.name = "landmark"
-        df.reset_index(inplace=True)
-        df["timestamp"] = timestamp
-        return df
+        data = {}
+        for output in detections:
+            for detection in output:
+                scores = detection[5:]
+                class_id = np.argmax(scores)
+                confidence = scores[class_id]
+
+                if confidence > 0.5:
+                    box = detection[0:4] * np.array([width, height, width, height])
+                    (centerX, centerY, w, h) = box.astype("int")
+                    x = int(centerX - (w / 2))
+                    y = int(centerY - (h / 2))
+
+                    data[f"YOLO_POINT_{class_id}"] = (x, y, 0, confidence)
+                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        return data, frame
