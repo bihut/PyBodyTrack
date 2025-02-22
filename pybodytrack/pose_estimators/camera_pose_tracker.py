@@ -1,86 +1,65 @@
-import cv2
-import importlib
-import numpy as np
 import pandas as pd
+import numpy as np
 import time
 
 class CameraPoseTracker:
     """Tracks human pose using different models and stores data in a DataFrame."""
 
-    STANDARD_LANDMARKS = [
-        "NOSE", "LEFT_EYE", "RIGHT_EYE", "LEFT_EAR", "RIGHT_EAR",
-        "LEFT_SHOULDER", "RIGHT_SHOULDER", "LEFT_ELBOW", "RIGHT_ELBOW",
-        "LEFT_WRIST", "RIGHT_WRIST", "LEFT_HIP", "RIGHT_HIP",
-        "LEFT_KNEE", "RIGHT_KNEE", "LEFT_ANKLE", "RIGHT_ANKLE"
-    ]
-
-    def __init__(self, processor_name="mediapipe_processor", camera_index=0):
-        self.cap = cv2.VideoCapture(camera_index)
-        self.processor = self.load_processor(processor_name)
+    def __init__(self, processor):
+        self.processor = processor
         self.data = []
 
-    def load_processor(self, processor_name):
-        """Dynamically loads the selected pose processor."""
-        module = importlib.import_module(f"pybodytrack.pose_estimators.{processor_name}")
-        class_name = processor_name.split('_')[0].capitalize() + "processor"
-        return getattr(module, class_name)()
+        # 📌 Obtener los landmarks estándar del procesador
+        self.STANDARD_LANDMARKS = self.processor.get_standard_landmarks()
 
     def process_frame(self, frame):
-        frame_data, processed_frame = self.processor.process(frame)
-        frame_data["timestamp"] = time.time()
+        """Process a single frame and store the results."""
+        pose_data, _ = self.processor.process(frame)
 
-        for lm in self.STANDARD_LANDMARKS:
-            if lm not in frame_data:
-                frame_data[lm] = (np.nan, np.nan, np.nan, np.nan)
-
-        self.data.append(frame_data)
-        return processed_frame
-
-    def run(self):
-        if not self.cap.isOpened():
-            print("Error: Could not open camera.")
-            return
-
-        while True:
-            ret, frame = self.cap.read()
-            if not ret:
-                break
-
-            processed_frame = self.process_frame(frame)
-            cv2.imshow("Pose Tracking", processed_frame)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        self.cap.release()
-        cv2.destroyAllWindows()
-
-    def get_dataframe(self):
-        """
-        Returns a DataFrame with properly formatted column names.
-
-        Returns:
-            pandas.DataFrame: DataFrame with landmark positions and timestamp.
-        """
-        if not self.data:
-            return pd.DataFrame()
-
-        # Convert list of dictionaries to DataFrame
-        df = pd.DataFrame(self.data)
-
-        # 📌 Separar los valores X, Y, Z y Confianza en columnas distintas
-        columns = ["timestamp"]  # Iniciamos con la columna de tiempo
+        # 📌 Asegurar que solo se guarden los landmarks correctos
+        cleaned_data = {"timestamp": time.time()}
 
         for landmark in self.STANDARD_LANDMARKS:
-            df[[f"{landmark}_X", f"{landmark}_Y", f"{landmark}_Z", f"{landmark}_CONFIDENCE"]] = pd.DataFrame(
-                df[landmark].tolist(), index=df.index
-            )
-            columns.extend([f"{landmark}_X", f"{landmark}_Y", f"{landmark}_Z", f"{landmark}_CONFIDENCE"])
+            cleaned_data[landmark] = pose_data.get(landmark, (np.nan, np.nan, 0, np.nan))  # 📌 Z = 0 para YOLO
 
-        # 📌 Eliminar las columnas que aún contienen las tuplas originales
-        df = df.drop(columns=self.STANDARD_LANDMARKS, errors="ignore")
+        self.data.append(cleaned_data)
 
-        # 📌 Reordenar columnas para mejor legibilidad
-        df = df[columns]
+    def get_dataframe(self):
+        """Returns a DataFrame with properly formatted column names."""
+        if not self.data:
+            print("❌ No hay datos en self.data. Algo está fallando en la recolección de datos.")
+            return pd.DataFrame()
 
-        return df
+        print("✅ Datos en self.data (primeros 5 frames):")
+        print(self.data[:5])
+
+        # 📌 Convertir lista de diccionarios a DataFrame
+        df = pd.DataFrame(self.data)
+
+        # 📌 Separar los valores de los landmarks en columnas individuales
+        landmark_dfs = []
+        for landmark in self.STANDARD_LANDMARKS:
+            if landmark in df:
+                landmark_df = pd.DataFrame(df[landmark].tolist(), columns=[
+                    f"{landmark}_x", f"{landmark}_y", f"{landmark}_z", f"{landmark}_confidence"
+                ])
+                landmark_dfs.append(landmark_df)
+            else:
+                empty_df = pd.DataFrame(np.nan, index=df.index, columns=[
+                    f"{landmark}_x", f"{landmark}_y", f"{landmark}_z", f"{landmark}_confidence"
+                ])
+                landmark_dfs.append(empty_df)
+
+        # 📌 Concatenar todas las columnas en un solo DataFrame optimizado
+        df_final = pd.concat([df[["timestamp"]]] + landmark_dfs, axis=1)
+
+        return df_final
+
+    def save_to_csv(self, filename="pose_data.csv"):
+        """Guarda el DataFrame en un archivo CSV."""
+        df = self.get_dataframe()
+        if not df.empty:
+            df.to_csv(filename, index=False)
+            print(f"✅ Datos guardados en {filename}")
+        else:
+            print("❌ No se generaron datos en el DataFrame.")
