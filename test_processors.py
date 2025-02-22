@@ -1,5 +1,5 @@
 
-from pybodytrack.processors.camera_pose_tracker import CameraPoseTracker
+from pybodytrack.pose_estimators.camera_pose_tracker import CameraPoseTracker
 
 tracker = CameraPoseTracker(processor_name="mediapipe_processor")
 tracker.run()

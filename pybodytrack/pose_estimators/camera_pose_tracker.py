@@ -21,8 +21,8 @@ class CameraPoseTracker:
 
     def load_processor(self, processor_name):
         """Dynamically loads the selected pose processor."""
-        module = importlib.import_module(f"pybodytrack.processors.{processor_name}")
-        class_name = processor_name.split('_')[0].capitalize() + "Processor"
+        module = importlib.import_module(f"pybodytrack.pose_estimators.{processor_name}")
+        class_name = processor_name.split('_')[0].capitalize() + "processor"
         return getattr(module, class_name)()
 
     def process_frame(self, frame):

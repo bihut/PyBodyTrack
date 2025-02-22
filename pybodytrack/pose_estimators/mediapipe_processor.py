@@ -1,7 +1,7 @@
 import cv2
 import mediapipe as mp
 
-class MediapipeProcessor:
+class Mediapipeprocessor:
     def __init__(self):
         self.mp_pose = mp.solutions.pose
         self.mp_drawing = mp.solutions.drawing_utils
