@@ -2,17 +2,17 @@ from pybodytrack.BodyTracking import BodyTracking
 from pybodytrack.enums.PoseProcessor import PoseProcessor
 from pybodytrack.bodyparts import body_parts as bodyparts
 from pybodytrack.enums.VideoMode import VideoMode
+from pybodytrack.methods.methods import Methods
 from pybodytrack.utils.utils import Utils
 
 body_tracking = BodyTracking(processor=PoseProcessor.MEDIAPIPE, mode=VideoMode.VIDEO, path_video="/home/bihut/Imágenes/squat.mp4",
-                             selected_landmarks=bodyparts.LEFT_ARM_LANDMARKS)
+                             selected_landmarks=bodyparts.TRUNK_LANDMARKS)
 body_tracking.start()
 df = body_tracking.getData()
 #columns=bodyparts.get_columns_for_part("lower_body")
 #df2=Utils.get_sub_landmark(df,columns)
-print(df)
-#body_tracking.save_csv()
-
+movement = Methods.euclidean_distance(df,filter=True,distance_threshold=2.0)
+print("cantidad de movimiento euclidean:",movement)
 '''
 import queue
 import threading
