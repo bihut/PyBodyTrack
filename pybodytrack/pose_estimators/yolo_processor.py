@@ -3,6 +3,9 @@ import torch
 import numpy as np
 from ultralytics import YOLO
 
+from pybodytrack.bodyparts import body_parts
+
+
 class YoloProcessor:
     """Pose detector using YOLOv8-Pose from Ultralytics."""
 
@@ -21,12 +24,7 @@ class YoloProcessor:
         self.model.to(self.device)
 
         # 📌 Landmarks detectados por YOLOv8 (solo 17)
-        self.STANDARD_LANDMARKS = [
-            "nose", "left_eye", "right_eye", "left_ear", "right_ear",
-            "left_shoulder", "right_shoulder", "left_elbow", "right_elbow",
-            "left_wrist", "right_wrist", "left_hip", "right_hip",
-            "left_knee", "right_knee", "left_ankle", "right_ankle"
-        ]
+        self.STANDARD_LANDMARKS = body_parts.STANDARD_LANDMARKS_YOLO
 
         # 📌 Conexiones del esqueleto para dibujar
         self.SKELETON_CONNECTIONS = [
@@ -40,10 +38,23 @@ class YoloProcessor:
         """Devuelve los landmarks estándar de YOLO"""
         return self.STANDARD_LANDMARKS
 
-    def process(self, frame):
+    def process(self, frame, selected_landmarks=None):
+        """
+        Process the frame using the model and draw only the selected landmarks and connections.
+
+        Parameters:
+            frame: The input image.
+            selected_landmarks (list, optional): List of landmark names (strings) to draw.
+                If None, all landmarks are drawn.
+
+        Returns:
+            data: A dictionary with the detected landmarks.
+            frame: The frame with the drawn keypoints and connections.
+        """
         results = self.model(frame)
         frame_height, frame_width, _ = frame.shape
-        data = {key: (np.nan, np.nan, 0, np.nan) for key in self.STANDARD_LANDMARKS}  # 📌 Z = 0 por defecto
+        # Initialize data with default values. Z is always 0.
+        data = {key: (np.nan, np.nan, 0, np.nan) for key in self.STANDARD_LANDMARKS}
         keypoint_positions = {}
 
         for result in results:
@@ -55,25 +66,33 @@ class YoloProcessor:
             for person in keypoints:
                 for idx, kp in enumerate(person):
                     if idx < len(self.STANDARD_LANDMARKS):
+                        landmark_name = self.STANDARD_LANDMARKS[idx]
                         kp = np.array(kp).flatten()
                         x, y = float(kp[0]), float(kp[1])
                         confidence = float(kp[2]) if len(kp) > 2 else np.nan
 
                         abs_x, abs_y = int(x * frame_width), int(y * frame_height)
-                        data[self.STANDARD_LANDMARKS[idx]] = (abs_x, abs_y, 0, confidence)  # 📌 Z is always 0
+                        data[landmark_name] = (abs_x, abs_y, 0, confidence)
                         keypoint_positions[idx] = (abs_x, abs_y)
 
-                        # 📌 Dibujar keypoints
-                        if confidence > 0.2:
+                        # Dibujar el landmark solo si:
+                        # - No se ha especificado una selección, o
+                        # - El landmark actual está en la lista de seleccionados.
+                        if confidence > 0.2 and (selected_landmarks is None or landmark_name in selected_landmarks):
                             cv2.circle(frame, (abs_x, abs_y), 5, (0, 255, 0), -1)
 
-                # 📌 Dibujar conexiones del esqueleto
+                # Dibujar conexiones del esqueleto
                 for (p1, p2) in self.SKELETON_CONNECTIONS:
                     if p1 in keypoint_positions and p2 in keypoint_positions:
-                        x1, y1 = keypoint_positions[p1]
-                        x2, y2 = keypoint_positions[p2]
-
-                        if x1 > 0 and y1 > 0 and x2 > 0 and y2 > 0:
-                            cv2.line(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
-
+                        # Obtener los nombres de los landmarks para cada conexión.
+                        landmark1 = self.STANDARD_LANDMARKS[p1]
+                        landmark2 = self.STANDARD_LANDMARKS[p2]
+                        # Dibujar conexión solo si ambos landmarks están en la selección (o si no se especificó selección).
+                        if selected_landmarks is None or (
+                                landmark1 in selected_landmarks and landmark2 in selected_landmarks):
+                            x1, y1 = keypoint_positions[p1]
+                            x2, y2 = keypoint_positions[p2]
+                            if x1 > 0 and y1 > 0 and x2 > 0 and y2 > 0:
+                                cv2.line(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
         return data, frame
+
