@@ -2,11 +2,14 @@ import cv2
 import time
 import threading
 
+import numpy as np
+
 from pybodytrack.enums.PoseProcessor import PoseProcessor
 from pybodytrack.enums.VideoMode import VideoMode
 from pybodytrack.pose_estimators.camera_pose_tracker import CameraPoseTracker
 from pybodytrack.pose_estimators.mediapipe_processor import MediaPipeProcessor
 from pybodytrack.pose_estimators.yolo_processor import YoloProcessor
+from pybodytrack.utils.utils import Utils
 
 
 class BodyTracking:
@@ -133,3 +136,45 @@ class BodyTracking:
             filename = "pose_data" + self.text + "_"+str(time.time())+".csv"
         self.tracker.save_to_csv(filename)
 
+    def stats_summary(self, movement):
+        print("Raw amount of movement:", movement)
+        data = self.getData()  # Guardamos el resultado de self.getData()
+        a = Utils.movement_per_second(movement, data)
+        print("Amount of movement per second:", a)
+        a = Utils.movement_per_frame(movement, data)
+        print("Amount of movement per frame:", a)
+        a = Utils.movement_per_landmark(movement, len(self.tracker.selected_landmarks))
+        print("Amount of movement per landmark:", a)
+        a = Utils.normalized_movement_index(movement, data, len(self.tracker.selected_landmarks))
+        print("Normalized amount of movement:", a)
+
+        num_landmarks = (len(data.columns) - 1) // 4
+        frame_movements = []
+
+        # Para cada par consecutivo de frames, sumamos el movimiento euclidiano de cada landmark.
+        for i in range(1, len(data)):
+            frame_distance = 0.0
+            print("Num landmarks:", num_landmarks)
+            for lm in range(num_landmarks):
+                base = lm * 4
+                col_x = data.columns[1 + base]
+                col_y = data.columns[1 + base + 1]
+                col_z = data.columns[1 + base + 2]
+                dx = data.iloc[i][col_x] - data.iloc[i - 1][col_x]
+                dy = data.iloc[i][col_y] - data.iloc[i - 1][col_y]
+                dz = data.iloc[i][col_z] - data.iloc[i - 1][col_z]
+                frame_distance += np.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+            frame_movements.append(frame_distance)
+
+        stats = Utils.frame_movement_statistics(frame_movements)
+
+        # Calcular el movimiento por segundo.
+        duration = data.iloc[-1]['timestamp'] - data.iloc[0]['timestamp']
+        movement_per_second = movement / duration if duration > 0 else 0.0
+        print("---------------------")
+        print("Movement Per Second:", movement_per_second)
+        print("Frame Movement Statistics:")
+        print(f"  Average: {stats.get('average'):.2f}")
+        print(f"  Std Dev: {stats.get('std_dev'):.2f}")
+        print(f"  Median: {stats.get('median'):.2f}")
+        print(f"  95th Percentile: {stats.get('p95'):.2f}")

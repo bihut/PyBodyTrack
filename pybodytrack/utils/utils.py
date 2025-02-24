@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import datetime
 from typing import List, Dict, Optional
@@ -161,3 +162,88 @@ class Utils:
             Optional[Dict]: The object with the specified key, or None if not found.
         """
         return next((obj for obj in objects if obj["key"] == key), None)
+
+    @staticmethod
+    def movement_per_second(total_movement, df):
+        """
+        Calculate the average movement per second.
+
+        Assumes the DataFrame has a 'timestamp' column as the first column,
+        with timestamps expressed in seconds.
+
+        :param total_movement: Total movement value (from any motion method).
+        :param df: Pandas DataFrame containing the landmark data, including 'timestamp'.
+        :return: Movement per second.
+        """
+        # Extract timestamps (assumed to be the first column)
+        timestamps = df.iloc[:, 0].values
+        duration = timestamps[-1] - timestamps[0]
+        if duration <= 0:
+            return 0.0
+        return total_movement / duration
+
+    @staticmethod
+    def movement_per_frame(total_movement, df):
+        """
+        Calculate the average movement per frame.
+
+        :param total_movement: Total movement value computed using any motion method.
+        :param df: Pandas DataFrame containing the landmark data.
+        :return: Average movement per frame.
+        """
+        n_frames = len(df)
+        if n_frames <= 1:
+            return 0.0
+        return total_movement / (n_frames - 1)
+
+    @staticmethod
+    def movement_per_landmark(total_movement, num_landmarks):
+        """
+        Calculate the average movement per landmark.
+
+        :param total_movement: Total movement computed using any motion method.
+        :param num_landmarks: Total number of landmarks.
+        :return: Average movement per landmark.
+        """
+        if num_landmarks <= 0:
+            return 0.0
+        return total_movement / num_landmarks
+
+    @staticmethod
+    def frame_movement_statistics(frame_movements):
+        """
+        Calculate statistical metrics for movement across frames.
+
+        :param frame_movements: List or array of movement values per frame.
+        :return: Dictionary containing average, standard deviation, median, and 95th percentile.
+        """
+        if len(frame_movements) == 0:
+            return {}
+        stats = {
+            "average": np.mean(frame_movements),
+            "std_dev": np.std(frame_movements),
+            "median": np.median(frame_movements),
+            "p95": np.percentile(frame_movements, 95)
+        }
+        return stats
+
+    @staticmethod
+    def normalized_movement_index(total_movement, df, num_landmarks):
+        """
+        Calculate a normalized movement index by dividing the total movement by both the
+        duration (in seconds) and the number of landmarks. This yields a dimensionless index,
+        facilitating comparison across videos with different durations or landmark counts.
+
+        Assumes the DataFrame has a 'timestamp' column as the first column.
+
+        :param total_movement: Total movement computed using any motion method.
+        :param df: Pandas DataFrame with the landmark data (including 'timestamp').
+        :param num_landmarks: Total number of landmarks.
+        :return: Normalized movement index.
+        """
+        # Extract the timestamp column (assumed to be the first column)
+        timestamps = df.iloc[:, 0].values
+        duration = timestamps[-1] - timestamps[0]
+        if duration <= 0 or num_landmarks <= 0:
+            return 0.0
+        return total_movement / (duration * num_landmarks)
