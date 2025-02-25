@@ -6,14 +6,23 @@ from pybodytrack.bodyparts import body_parts as bodyparts
 from pybodytrack.enums.VideoMode import VideoMode
 from pybodytrack.methods.methods import Methods
 from pybodytrack.utils.utils import Utils
-
-body_tracking = BodyTracking(processor=PoseProcessor.MEDIAPIPE, mode=VideoMode.VIDEO, path_video="/home/bihut/Imágenes/zappa.mp4",
-                             selected_landmarks=bodyparts.UPPER_BODY_LANDMARKS)
+path_videos = "/home/bihut/Vídeos/squat/mujer/squat_slow.mp4"
+landmarks = bodyparts.STANDARD_LANDMARKS
+body_tracking = BodyTracking(processor=PoseProcessor.MEDIAPIPE, mode=VideoMode.VIDEO, path_video=path_videos,
+                             selected_landmarks=landmarks)
+body_tracking.set_times(5,15)
 body_tracking.start()
+
 df = body_tracking.getData()
+#df = body_tracking.filter_interval(10,45)
+#55,75
 #columns=bodyparts.get_columns_for_part("lower_body")
 #df2=Utils.get_sub_landmark(df,columns)
 movement = Methods.euclidean_distance(df,filter=True,distance_threshold=2.0)
+norm=body_tracking.normalized_movement_index(movement,df,len(bodyparts.STANDARD_LANDMARKS))
+print("normalized_movement_index:",norm)
+movl=body_tracking.movement_per_landmark(movement, len(bodyparts.STANDARD_LANDMARKS))
+print("movement_per_landmark:",movl)
 body_tracking.stats_summary(movement)
 '''
 print("cantidad de movimiento euclidean:",movement)
