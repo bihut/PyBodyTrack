@@ -6,7 +6,7 @@ from pybodytrack.bodyparts import body_parts as bodyparts
 from pybodytrack.enums.VideoMode import VideoMode
 from pybodytrack.methods.methods import Methods
 from pybodytrack.utils.utils import Utils
-path_videos = "/home/bihut/Vídeos/squat/mujer/squat_slow.mp4"
+path_videos = "/home/bihut/Vídeos/squat/mujer/squat_normal_10reps.mp4"
 landmarks = bodyparts.STANDARD_LANDMARKS
 body_tracking = BodyTracking(processor=PoseProcessor.MEDIAPIPE, mode=VideoMode.VIDEO, path_video=path_videos,
                              selected_landmarks=landmarks)
@@ -19,7 +19,7 @@ df = body_tracking.getData()
 #columns=bodyparts.get_columns_for_part("lower_body")
 #df2=Utils.get_sub_landmark(df,columns)
 movement = Methods.euclidean_distance(df,filter=True,distance_threshold=2.0)
-norm=body_tracking.normalized_movement_index(movement,df,len(bodyparts.STANDARD_LANDMARKS))
+norm=body_tracking.normalized_movement_index(movement,len(landmarks))
 print("normalized_movement_index:",norm)
 movl=body_tracking.movement_per_landmark(movement, len(bodyparts.STANDARD_LANDMARKS))
 print("movement_per_landmark:",movl)
