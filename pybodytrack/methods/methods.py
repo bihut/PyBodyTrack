@@ -115,6 +115,162 @@ class Methods:
                     total_movement += distance
 
         return total_movement
+    @staticmethod
+    def euclidean_distanceborrar(df, filter=True, distance_threshold=2.0, Q=1e-5, R=0.1):
+        """
+        Calculates the total Euclidean movement (sum of distances between consecutive frames)
+        and returns a DataFrame with the movement details for each pair of frames along with their timestamps.
+
+        When `filter` is True, a Kalman filter is applied to each coordinate (x, y, z) and
+        movements smaller than `distance_threshold` are ignored.
+        When False, the pure Euclidean distance is computed using raw data.
+
+        Assumes the DataFrame has the following structure:
+          - The first column is 'timestamp'.
+          - For each landmark, there are four columns in order: <landmark>_x, <landmark>_y, <landmark>_z, <landmark>_confidence.
+
+        :param df: Pandas DataFrame containing the landmark data.
+        :param filter: Boolean flag to apply Kalman filtering and distance thresholding.
+        :param distance_threshold: Minimum Euclidean distance change to be considered a valid movement when filtering.
+        :param Q: Process variance for the Kalman filter.
+        :param R: Measurement variance for the Kalman filter.
+        :return: A tuple (total_movement, movement_df) where:
+                 - total_movement is the sum of the Euclidean distances between consecutive frames.
+                 - movement_df is a DataFrame with columns:
+                       'timestamp_start', 'timestamp_end', and 'movement',
+                     representing the movement (sum of distances for each landmark) between each pair of frames.
+        """
+        total_movement = 0.0
+        movements = []  # List to store movement details for each pair of frames
+
+        print("EUCLIDEAN: ",len(df))
+        columns = list(df.columns)
+        landmark_columns = columns[1:]  # Exclude the 'timestamp' column
+        num_landmarks = len(landmark_columns) // 4
+
+        if filter:
+            # Create a filtered copy of the DataFrame
+            df_filtered = df.copy()
+            for lm in range(num_landmarks):
+                base = lm * 4
+                col_x = landmark_columns[base]
+                col_y = landmark_columns[base + 1]
+                col_z = landmark_columns[base + 2]
+                # Apply the Kalman filter to the x, y, and z coordinates for each landmark
+                df_filtered[col_x] = Methods._kalman_filter(df[col_x].values, Q, R)
+                df_filtered[col_y] = Methods._kalman_filter(df[col_y].values, Q, R)
+                df_filtered[col_z] = Methods._kalman_filter(df[col_z].values, Q, R)
+
+            # Compute the Euclidean distance using the filtered data
+            for i in range(len(df_filtered) - 1):
+                frame_movement = 0.0
+                for lm in range(num_landmarks):
+                    base = lm * 4
+                    col_x = landmark_columns[base]
+                    col_y = landmark_columns[base + 1]
+                    col_z = landmark_columns[base + 2]
+                    dx = df_filtered.iloc[i + 1][col_x] - df_filtered.iloc[i][col_x]
+                    dy = df_filtered.iloc[i + 1][col_y] - df_filtered.iloc[i][col_y]
+                    dz = df_filtered.iloc[i + 1][col_z] - df_filtered.iloc[i][col_z]
+                    distance = np.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+                    if distance >= distance_threshold:
+                        frame_movement += distance
+                total_movement += frame_movement
+                movements.append({
+                    'timestamp_start': df_filtered.iloc[i]['timestamp'],
+                    'timestamp_end': df_filtered.iloc[i + 1]['timestamp'],
+                    'movement': frame_movement
+                })
+        else:
+            # Compute the pure Euclidean distance using the raw data (no filtering)
+            for i in range(len(df) - 1):
+                frame_movement = 0.0
+                for lm in range(num_landmarks):
+                    base = lm * 4
+                    col_x = landmark_columns[base]
+                    col_y = landmark_columns[base + 1]
+                    col_z = landmark_columns[base + 2]
+                    dx = df.iloc[i + 1][col_x] - df.iloc[i][col_x]
+                    dy = df.iloc[i + 1][col_y] - df.iloc[i][col_y]
+                    dz = df.iloc[i + 1][col_z] - df.iloc[i][col_z]
+                    distance = np.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+                    frame_movement += distance
+                total_movement += frame_movement
+                movements.append({
+                    'timestamp_start': df.iloc[i]['timestamp'],
+                    'timestamp_end': df.iloc[i + 1]['timestamp'],
+                    'movement': frame_movement
+                })
+
+        # Convert the list of movements into a DataFrame
+        movement_df = pd.DataFrame(movements)
+        return total_movement, movement_df
+
+    @staticmethod
+    def euclidean_distancebackup(df, filter=True, distance_threshold=2.0, Q=1e-5, R=0.1):
+        """
+        Calculate the total Euclidean distance of body landmarks between consecutive frames.
+
+        When `filter` is True, a Kalman filter is applied to each coordinate (x, y, z)
+        and small movements below `distance_threshold` are ignored.
+        When False, the pure Euclidean distance is computed from raw data.
+
+        Assumes the DataFrame has the following structure:
+          - The first column is 'timestamp'.
+          - For each landmark, there are four columns in order: <landmark>_x, <landmark>_y, <landmark>_z, <landmark>_confidence.
+
+        :param df: Pandas DataFrame with the landmark data.
+        :param filter: Boolean flag to apply Kalman filtering and thresholding if True.
+        :param distance_threshold: Minimum Euclidean distance change to be considered valid movement when filtering.
+        :param Q: Process variance for the Kalman filter.
+        :param R: Measurement variance for the Kalman filter.
+        :return: Total movement as the sum of Euclidean distances between consecutive frames.
+        """
+        total_movement = 0.0
+        columns = list(df.columns)
+        landmark_columns = columns[1:]  # Exclude timestamp
+        num_landmarks = len(landmark_columns) // 4
+
+        if filter:
+            # Create a filtered copy of the DataFrame.
+            df_filtered = df.copy()
+            for lm in range(num_landmarks):
+                base = lm * 4
+                col_x = landmark_columns[base]
+                col_y = landmark_columns[base + 1]
+                col_z = landmark_columns[base + 2]
+                df_filtered[col_x] = Methods._kalman_filter(df[col_x].values, Q, R)
+                df_filtered[col_y] = Methods._kalman_filter(df[col_y].values, Q, R)
+                df_filtered[col_z] = Methods._kalman_filter(df[col_z].values, Q, R)
+
+            # Compute Euclidean distance using the filtered data.
+            for i in range(len(df_filtered) - 1):
+                for lm in range(num_landmarks):
+                    base = lm * 4
+                    col_x = landmark_columns[base]
+                    col_y = landmark_columns[base + 1]
+                    col_z = landmark_columns[base + 2]
+                    dx = df_filtered.iloc[i + 1][col_x] - df_filtered.iloc[i][col_x]
+                    dy = df_filtered.iloc[i + 1][col_y] - df_filtered.iloc[i][col_y]
+                    dz = df_filtered.iloc[i + 1][col_z] - df_filtered.iloc[i][col_z]
+                    distance = np.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+                    if distance >= distance_threshold:
+                        total_movement += distance
+        else:
+            # Compute pure Euclidean distance using raw data.
+            for i in range(len(df) - 1):
+                for lm in range(num_landmarks):
+                    base = lm * 4
+                    col_x = landmark_columns[base]
+                    col_y = landmark_columns[base + 1]
+                    col_z = landmark_columns[base + 2]
+                    dx = df.iloc[i + 1][col_x] - df.iloc[i][col_x]
+                    dy = df.iloc[i + 1][col_y] - df.iloc[i][col_y]
+                    dz = df.iloc[i + 1][col_z] - df.iloc[i][col_z]
+                    distance = np.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+                    total_movement += distance
+
+        return total_movement
 
     @staticmethod
     def manhattan_distance(df, filter=True, distance_threshold=2.0, Q=1e-5, R=0.1):

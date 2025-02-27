@@ -1,16 +1,102 @@
+import sys
+import threading
+import time
+
 import numpy as np
+import pandas as pd
 
 from pybodytrack.BodyTracking import BodyTracking
 from pybodytrack.enums.PoseProcessor import PoseProcessor
 from pybodytrack.bodyparts import body_parts as bodyparts
 from pybodytrack.enums.VideoMode import VideoMode
+from pybodytrack.methods import methods
 from pybodytrack.methods.methods import Methods
+from pybodytrack.utils.Observer import Observer
+from pybodytrack.utils.movement_observer import MovementObserver
 from pybodytrack.utils.utils import Utils
+
+
+class CustomObserver(Observer):
+    def __init__(self, frame_block_size=30):
+        """
+        Parameters:
+            frame_block_size (int): Number of frames to accumulate before processing.
+        """
+        super().__init__()
+        self.frame_block_size = frame_block_size
+        self.buffer = []  # Buffer to store incoming landmark data
+
+    def handleMessage(self, msg):
+        if msg.what == 1:  # New landmark data received
+            self.buffer.append(msg.obj)
+            if len(self.buffer) >= self.frame_block_size:
+                # Get a block of frames (non-overlapping)
+                block = self.buffer[:self.frame_block_size]
+                # Remove the processed frames from the buffer
+                self.buffer = self.buffer[self.frame_block_size:]
+                # Offload processing to another thread
+                threading.Thread(target=self.processBuffer, args=(block,), daemon=True).start()
+        else:
+            # Handle other message types if needed
+            print("Received error message:", msg.obj)
+
+    def processBuffer(self, block):
+        """
+        Process a block of landmark data on a separate thread.
+
+        Converts the block (list of rows) into a DataFrame and applies any heavy processing
+        (for example, computing movement). This runs in a separate thread so that the video loop is not blocked.
+        """
+        df_buffer = pd.DataFrame(block)
+        start_time = df_buffer.iloc[0]['timestamp']
+        end_time = df_buffer.iloc[-1]['timestamp']
+        # Perform heavy processing here (for instance, calculating movement)
+        # Example: movement = Methods.euclidean_distance(df_buffer)
+        # For demonstration, we simply print the information:
+        print(f"Processing block from {start_time} to {end_time} with {len(df_buffer)} frames.")
+        movement = Methods.euclidean_distance(df_buffer)
+        print("Cantidad de movimiento euclidean:",movement)
+
 path_videos = "/home/bihut/Vídeos/squat/mujer/squat_normal_10reps.mp4"
+#path_videos = "/home/bihut/Imágenes/egipto/video7.mp4"
 landmarks = bodyparts.STANDARD_LANDMARKS
+
+observer = CustomObserver()
+observer.startLoop()
+
 body_tracking = BodyTracking(processor=PoseProcessor.MEDIAPIPE, mode=VideoMode.VIDEO, path_video=path_videos,
                              selected_landmarks=landmarks)
-body_tracking.set_times(5,15)
+#body_tracking.set_times(5,15)
+
+#FUNCIONALIDAD - METER VARIOS VIDEOS Y QUE LOS ORDENE POR CANTIDAD DE MOVIMIENTO
+#FUNCIONALIDAD - METER DOS VIDEOS Y DECIR CUAL TIENE MAS MOVIMIENTO y LA PROPORCION
+#tracker_thread = threading.Thread(target=body_tracking.start, kwargs={
+#    'observer': None,
+#    'distance_function': None,
+#    'fps': None
+#})
+#tracker_thread.start()
+# Start the tracking in a separate thread (since start() is blocking)
+
+tracker_thread = threading.Thread(target=body_tracking.start, kwargs={
+        'observer': None,
+        'fps': 30
+    })
+tracker_thread.start()
+
+try:
+    while tracker_thread.is_alive():
+        time.sleep(1)  # Main thread idle loop
+except KeyboardInterrupt:
+    print("Stopping tracking...")
+    body_tracking.stop()
+
+tracker_thread.join()
+
+if 1==1:
+    sys.exit()
+
+observer = MovementObserver()
 body_tracking.start()
 
 df = body_tracking.getData()
