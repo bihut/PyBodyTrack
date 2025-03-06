@@ -15,8 +15,6 @@ from scipy.signal import convolve2d
 from scipy.spatial.distance import mahalanobis
 import cv2
 class Methods:
-    import numpy as np
-    import pandas as pd
     @staticmethod
     def _kalman_filter(data, Q=1e-5, R=0.1):
         """

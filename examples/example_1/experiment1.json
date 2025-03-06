@@ -1,0 +1,149 @@
+{
+  "path_videos": "/home/bihut/Documentos/UGR/Papers/pyBodyTrack-SoftwareX/ExperimentosVideos/Experimento1/Experimento1",
+  "path_output": "/home/bihut/Documentos/UGR/Papers/pyBodyTrack-SoftwareX/ExperimentosVideos/Experimento1/output",
+  "videos": [
+    {
+      "name": "Barbell_bicep_curl_10.mp4",
+        "landmarks": "Upper Body"
+    },
+    {
+      "name": "Romanian_Deadlift_10.mp4",
+      "start": 6,
+      "end": 36,
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Chin_ups_10.mp4",
+      "start": 3,
+      "end": 22,
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Bench_Press_10.mp4",
+
+      "landmarks": "Upper Body"
+    },
+    {
+      "name": "Hip_thrust_10.mp4",
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Glute_bridge_single_10.mp4",
+      "start": 6,
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Front_raises_10.mp4",
+      "start": 0,
+      "end": 15,
+      "landmarks": "Upper Body"
+    },
+    {
+      "name": "Bodyweight_squats_10.mp4",
+      "start": 2,
+      "end": 17,
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Hack_Squat_10.mp4",
+      "start": 0,
+      "end": 29,
+      "landmarks": "Lower Body"
+    },
+    {
+      "name": "Barbell_static_lunges_10.mp4",
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Sumo_deadlifts_10.mp4",
+      "start": 2,
+      "end": 23,
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Skull_crushers_plate_10.mp4",
+      "landmarks": "Upper Body"
+    },
+    {
+      "name": "Triceps_extension_band_45degree_10.mp4",
+      "landmarks": "Upper Body"
+    },
+    {
+      "name": "Cable_scull_crushers_rope_10.mp4",
+      "landmarks": "Upper Body"
+    },
+    {
+      "name": "Dips_10.mp4",
+      "landmarks": "Upper Body"
+    },
+    {
+      "name": "Flat_bar_skull_crusher_10.mp4",
+      "landmarks": "Upper Body"
+    },
+    {
+      "name": "Plate_press_flat_10.mp4",
+      "landmarks": "Upper Body",
+        "start": 5,
+        "end": 20
+    },
+
+    {
+      "name": "Diagonal_front_alternating_lunge_10.mp4",
+      "start": 82,
+      "end": 103,
+      "landmarks": "Whole Body"
+    },
+
+    {
+      "name": "Bulgarian_split_squat_with_barbell_10.mp4",
+      "start": 8,
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Bulgarian_split_squat_10.mp4",
+      "start": 0,
+      "end": 18,
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Calf_raises_on_leg_press_machine_10.mp4",
+      "start": 6,
+      "end": 28,
+      "landmarks": "Lower Body"
+    },
+    {
+      "name": "Swiss_ball_hamstring_curl_10.mp4",
+      "start": 7,
+      "landmarks": "Lower Body"
+    },
+    {
+      "name": "Calf_raises_10.mp4",
+      "start": 10,
+      "end": 35,
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "Leg_press_plate_10.mp4",
+      "start": 6,
+      "end": 27,
+      "landmarks": "Lower Body"
+    },
+    {
+      "name": "Leg_extension_10.mp4",
+      "start": 5,
+      "end": 37,
+      "landmarks": "Lower Body"
+    },
+    {
+      "name": "Barbell_row_10.mp4",
+      "start": 1,
+      "end": 17,
+      "landmarks": "Upper Body"
+    },
+    {
+      "name": "Military_press_10.mp4",
+      "start": 1,
+      "landmarks": "Upper Body"
+    }
+  ]
+}

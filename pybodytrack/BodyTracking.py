@@ -1,19 +1,15 @@
-import concurrent.futures
-
 import cv2
 import time
 import threading
 
-import numpy as np
 import pandas as pd
 
 from pybodytrack.enums.PoseProcessor import PoseProcessor
 from pybodytrack.enums.VideoMode import VideoMode
-from pybodytrack.pose_estimators.camera_pose_tracker import CameraPoseTracker
+from pybodytrack.posetracker.pose_tracker import PoseTracker
 from pybodytrack.pose_estimators.mediapipe_processor import MediaPipeProcessor
 from pybodytrack.pose_estimators.yolo_processor import YoloProcessor
-from pybodytrack.utils.Message import Message
-from pybodytrack.utils.utils import Utils
+from pybodytrack.observer.Message import Message
 
 
 class BodyTracking:
@@ -31,8 +27,9 @@ class BodyTracking:
         elif processor == PoseProcessor.YOLO:
             self.processor = YoloProcessor(model_path=custom_model_path)
         #self.processor = processor
-        self.tracker = CameraPoseTracker(self.processor,selected_landmarks=selected_landmarks)
+        self.tracker = PoseTracker(self.processor, selected_landmarks=selected_landmarks)
         self.mode = mode
+
         if mode == VideoMode.VIDEO:
             self.path_video = path_video
 
@@ -53,6 +50,10 @@ class BodyTracking:
         # Text identifier for saving CSV (YOLO vs. MediaPipe)
         self.text = "YOLO" if isinstance(self.processor, YoloProcessor) else "MediaPipe"
 
+        #Random frame to get illustrate image
+        self.randomFrame = None
+        self.cont=0
+
         # Shared variables and lock for frame processing
         self.latest_frame_lock = threading.Lock()
         self.frame_to_process = None  # Latest frame available for processing
@@ -66,6 +67,18 @@ class BodyTracking:
 
     def set_times(self,startsec,endsec):
         if self.mode == VideoMode.VIDEO:
+            if startsec is None:
+                startsec=0
+            if endsec is None:
+                total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+                fps = self.cap.get(cv2.CAP_PROP_FPS)
+                if fps > 0:
+                    endsec = total_frames / fps  # Calcula la duración total en segundos
+                else:
+                    print("Warning: Unable to determine video FPS, setting default end time to 60s")
+                    endsec = 10  # Valor por defecto si FPS no está disponible
+
+            # Verificar que el tiempo de finalización es mayor al de inicio
             if endsec>startsec:
                 self.starttime = startsec
                 self.endtime = endsec
@@ -87,6 +100,9 @@ class BodyTracking:
                 else:
                     frame = None
             if frame is not None:
+                self.cont+=1
+                if self.cont==60:
+                    self.randomFrame = frame
                 # Process the frame (this should draw the skeleton on the frame)
                 self.tracker.process_frame(frame)
                 # Store the processed frame for display
@@ -95,7 +111,11 @@ class BodyTracking:
             else:
                 time.sleep(0.001)  # small delay to avoid busy waiting
 
-    import concurrent.futures
+    def save_random_frame(self,path):
+        if self.randomFrame is not None:
+            cv2.imwrite(path,self.randomFrame)
+        else:
+            print("No random frame available")
 
     def start(self, observer=None, fps=None):
         """
@@ -138,7 +158,7 @@ class BodyTracking:
 
             # Retrieve the complete landmark DataFrame so far
             df_all = self.getData()
-            if not df_all.empty and len(df_all) > last_index:
+            if df_all is not None and not df_all.empty and len(df_all) > last_index:
                 # Get only the new rows that haven't been sent yet
                 new_rows = df_all.iloc[last_index:]
                 for idx, row in new_rows.iterrows():
@@ -159,113 +179,7 @@ class BodyTracking:
 
         self.stop()
 
-    def startbackup2(self, observer=None, distance_function=None, fps=None):
-        """
-        Starts processing and displaying video frames. This version accumulates exactly 'fps' frames (non-overlapping blocks).
-        When the buffer is full, it computes the movement using the provided distance_function and sends a message to the observer
-        containing the movement value along with the start and end timestamps for that block.
 
-        Parameters:
-            observer: An instance of Observer (or subclass) with a handleMessage(msg) method.
-            distance_function: A callable that takes a Pandas DataFrame and returns a movement value.
-            fps: The number of frames to group (if None, self.fps is used).
-        """
-        used_fps = fps if fps is not None else self.fps
-        frame_buffer = []  # List to accumulate new landmark data rows (non-overlapping blocks)
-        last_index = 0  # To track already processed rows in the complete DataFrame
-
-        self.processing_thread.start()
-
-        while self.cap.isOpened():
-            loop_start_time = time.time()
-            ret, frame = self.cap.read()
-            if not ret:
-                break
-
-            # Update the frame for processing
-            with self.latest_frame_lock:
-                self.frame_to_process = frame.copy()
-                display_frame = (self.latest_processed_frame.copy()
-                                 if self.latest_processed_frame is not None
-                                 else frame.copy())
-
-            # Check if an end time was set (for video mode)
-            if self.endtime is not None:
-                current_msec = self.cap.get(cv2.CAP_PROP_POS_MSEC)
-                if current_msec > self.endtime * 1000:
-                    break
-
-            # Display the frame
-            cv2.imshow("Pose Tracking", display_frame)
-
-            # Retrieve the complete landmark DataFrame so far
-            df_all = self.getData()
-            if not df_all.empty and len(df_all) > last_index:
-                # Get only the new rows that haven't been processed yet
-                new_rows = df_all.iloc[last_index:]
-                for idx, row in new_rows.iterrows():
-                    frame_buffer.append(row)
-                last_index = len(df_all)  # Update pointer
-
-            # When we have exactly (or more than) 'used_fps' frames, process the first block
-            if len(frame_buffer) >= used_fps and distance_function is not None:
-                buffer_df = pd.DataFrame(frame_buffer[:used_fps])
-                frame_buffer = frame_buffer[used_fps:]  # Remove processed rows
-                movement = distance_function(buffer_df)
-                start_time = buffer_df.iloc[0]['timestamp']
-                end_time = buffer_df.iloc[-1]['timestamp']
-
-                # Send a success message with movement data
-                if observer is not None:
-                    msg = Message(what=1, obj=(movement, start_time, end_time))
-                    observer.sendMessage(msg)
-
-            elapsed_time = time.time() - loop_start_time
-            remaining_time = self.frame_interval - elapsed_time
-            if remaining_time > 0:
-                time.sleep(remaining_time)
-
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        self.stop()
-
-    def startbackup(self):
-        """
-        Starts the processing thread and the main loop for reading, processing,
-        and displaying the video frames.
-        """
-        self.processing_thread.start()
-        while self.cap.isOpened():
-            start_time = time.time()
-            ret, frame = self.cap.read()
-            if not ret:
-                break
-
-            # Update the frame for processing
-            with self.latest_frame_lock:
-                self.frame_to_process = frame.copy()
-                # Use the processed frame if available; otherwise, show the raw frame
-                if self.latest_processed_frame is not None:
-                    display_frame = self.latest_processed_frame.copy()
-                else:
-                    display_frame = frame.copy()
-
-            if self.endtime is not None:
-                current_msec = self.cap.get(cv2.CAP_PROP_POS_MSEC)
-                if current_msec > self.endtime * 1000:
-                    break
-            cv2.imshow("Pose Tracking", display_frame)
-            elapsed_time = time.time() - start_time
-            remaining_time = self.frame_interval - elapsed_time
-            if remaining_time > 0:
-                time.sleep(remaining_time)
-
-            # Exit on pressing 'q'
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
-
-        self.stop()
 
     def stop(self):
         """
@@ -273,9 +187,13 @@ class BodyTracking:
         and closes all OpenCV windows.
         """
         self.stop_processing = True
-        self.processing_thread.join()
-        self.cap.release()
+        if self.processing_thread.is_alive():
+            self.processing_thread.join()
+        #self.processing_thread.join()
+        if self.cap.isOpened():
+            self.cap.release()
         cv2.destroyAllWindows()
+        cv2.waitKey(1)
 
     def getData(self):
         return self.tracker.get_dataframe()
@@ -283,6 +201,7 @@ class BodyTracking:
     def save_csv(self, filename=None):
         """
         Saves the tracking data to a CSV file.
+
 
         Parameters:
             filename (str): Optional filename for the CSV. If None, a default
