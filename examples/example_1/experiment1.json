@@ -140,6 +140,19 @@
       "name": "Military_press_10.mp4",
       "start": 1,
       "landmarks": "Upper Body"
+    },
+    {
+      "name": "squat_woman_10reps.mp4",
+      "landmarks": "Whole Body"
+    },
+    {
+      "name": "bench_press_boy_10reps.mp4",
+      "landmarks": "Upper Body",
+        "start": 8
+    },
+    {
+      "name": "deadlift_guy_10reps.mp4",
+      "landmarks": "Whole Body"
     }
   ]
 }
