@@ -46,13 +46,14 @@
     },
     {
       "name": "Hack_Squat_10.mp4",
-      "start": 0,
+      "start": 5,
       "end": 29,
       "landmarks": "Lower Body"
     },
     {
       "name": "Barbell_static_lunges_10.mp4",
-      "landmarks": "Whole Body"
+      "landmarks": "Whole Body",
+      "start": 5
     },
     {
       "name": "Sumo_deadlifts_10.mp4",
@@ -66,19 +67,19 @@
     },
     {
       "name": "Triceps_extension_band_45degree_10.mp4",
-      "landmarks": "Upper Body"
+      "landmarks": "Upper Body",
+      "start": 5
     },
-    {
-      "name": "Cable_scull_crushers_rope_10.mp4",
-      "landmarks": "Upper Body"
-    },
+
     {
       "name": "Dips_10.mp4",
-      "landmarks": "Upper Body"
+      "landmarks": "Upper Body",
+      "start": 2
     },
     {
       "name": "Flat_bar_skull_crusher_10.mp4",
-      "landmarks": "Upper Body"
+      "landmarks": "Upper Body",
+        "start": 5
     },
     {
       "name": "Plate_press_flat_10.mp4",
@@ -87,21 +88,16 @@
         "end": 20
     },
 
-    {
-      "name": "Diagonal_front_alternating_lunge_10.mp4",
-      "start": 82,
-      "end": 103,
-      "landmarks": "Whole Body"
-    },
+
 
     {
       "name": "Bulgarian_split_squat_with_barbell_10.mp4",
-      "start": 8,
+      "start": 10,
       "landmarks": "Whole Body"
     },
     {
       "name": "Bulgarian_split_squat_10.mp4",
-      "start": 0,
+      "start": 4,
       "end": 18,
       "landmarks": "Whole Body"
     },

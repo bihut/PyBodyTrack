@@ -46,7 +46,7 @@ class PoseTracker:
 
         self.data.append(cleaned_data)
         print("LEN ", len(self.data))
-
+        print("LEN COLS:",len(cleaned_data))
     def get_dataframe(self):
         """Returns a DataFrame with properly formatted column names."""
         if not self.data or self.data is None:
@@ -95,7 +95,7 @@ class PoseTracker:
                 print([len(item) for item in lista if
                        isinstance(item, list)])  # Verifica la longitud de las listas internas
 
-            sys.exit(0)
+            #sys.exit(0)
 
     def save_to_csv(self, filename="pose_data.csv"):
         """Guarda el DataFrame en un archivo CSV."""

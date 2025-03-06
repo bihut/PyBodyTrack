@@ -13,6 +13,7 @@ from pybodytrack.bodyparts import body_parts as bodyparts
 from pybodytrack.enums.VideoMode import VideoMode
 from pybodytrack.methods.methods import Methods
 from pybodytrack.observer.Observer import Observer
+from pybodytrack.utils.utils import Utils
 
 
 class CustomObserver(Observer):
@@ -62,7 +63,7 @@ with open(json_data, "r") as file:
     data = json.load(file)
 path_videos = data['path_videos']
 path_output = data['path_output']
-video = data['videos'][3]
+video = data['videos'][24]
 #for video in data['videos']:
 path_video = path_videos + "/" + video['name']
 name_video = video['name']
@@ -111,6 +112,9 @@ if tracker_thread.is_alive():
     print("Tracker thread still alive. Force stopping...")
     body_tracking.stop()
 df = body_tracking.getData()
+#df=Utils.remove_empty_rows(df)
+#df = Utils.recalculate_timestamps(df,body_tracking.fps)
+df.to_csv("df.csv")
 movement = Methods.chebyshev_distance(df, filter=True, distance_threshold=2.0)
 norm = body_tracking.normalized_movement_index(movement, len(landmark))
 res_json['ram'] = movement

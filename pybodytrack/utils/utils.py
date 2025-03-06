@@ -33,6 +33,20 @@ class Utils:
             return pd.DataFrame()  # Return an empty DataFrame on failure
 
     @staticmethod
+    def remove_empty_rows(df):
+        """
+        Removes entire rows that contain empty values (NaN, None, null) in any column.
+
+        :param df: Pandas DataFrame
+        :return: DataFrame without rows containing empty values
+        """
+        return df.dropna(how="any").reset_index(drop=True)
+
+    @staticmethod
+    def recalculate_timestamps(df,fps):
+        df["timestamp"] = pd.Series(range(len(df))) * (1 / fps)  # Reasigna tiempos con FPS constante
+        return df
+    @staticmethod
     def clean_dataframe(df):
         """
         Cleans a DataFrame by removing rows where the 'timestamp' column contains non-numeric values.
