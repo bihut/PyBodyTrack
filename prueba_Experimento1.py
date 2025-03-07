@@ -63,12 +63,13 @@ with open(json_data, "r") as file:
     data = json.load(file)
 path_videos = data['path_videos']
 path_output = data['path_output']
-video = data['videos'][27]
+video = data['videos'][0]
 #for video in data['videos']:
 path_video = path_videos + "/" + video['name']
 name_video = video['name']
 print("Voy con ",name_video)
 res_json = {}
+res_json['exercise']=video['exercise']
 
 landmark = bodyparts.STANDARD_LANDMARKS
 out_res = path_output
