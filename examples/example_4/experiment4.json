@@ -1,0 +1,34 @@
+{
+  "path_videos": "/home/bihut/Documentos/UGR/Papers/pyBodyTrack-SoftwareX/ExperimentosVideos/Experimento4/Experimento4",
+  "path_output": "/home/bihut/Documentos/UGR/Papers/pyBodyTrack-SoftwareX/ExperimentosVideos/Experimento4/output",
+  "videos": [
+    {
+      "name": "Sitting.mp4",
+        "landmarks": "Whole Body",
+      "exercise": "Sitting",
+      "id": 0
+    },
+
+    {
+      "name": "Vacuuming.mp4",
+      "landmarks": "Whole Body",
+        "exercise": "Vacuuming/Cleaning",
+        "id": 3,
+      "start": 696,
+      "end": 703
+    },
+    {
+      "name": "Walking.mp4",
+      "start": 6,
+      "landmarks": "Whole Body",
+        "exercise": "Walking",
+        "id": 4
+    },
+    {
+      "name": "Washing_dishes.mp4",
+      "landmarks": "Whole Body",
+        "exercise": "Washing Dishes",
+        "id": 5
+    }
+  ]
+}
