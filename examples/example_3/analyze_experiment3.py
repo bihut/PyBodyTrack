@@ -33,12 +33,12 @@ def plot_movement_scatter(json_file):
 
     # Create scatter plot
     plt.figure(figsize=(10, 6))
-    plt.scatter(times, movements, color='red', alpha=0.7)
-    plt.xlabel("Time (s)")
+    plt.plot(times, movements, color='red', alpha=0.7)
+    plt.xlabel("Frames")
     plt.ylabel("Movement")
-    plt.title("Scatter Plot of Movement Over Time")
+    #plt.title("Scatter Plot of Movement Over Time")
     plt.grid(True)
-    plt.savefig('movement_scatter.png', dpi=300, bbox_inches='tight')
+    plt.savefig('movement_scatter.png', dpi=600, bbox_inches='tight')
     plt.show()
 
 
@@ -54,5 +54,5 @@ def convert_json_to_frame_paths(json_files):
 #delete_exercises = ["Sumo Deadlift","Leg Press Machine", "Romanian Deadlift"]
 #keep_exercises = ["Plank","Leg Extension","Bicep Curl","Skull Crushers DB",
  #                 "Bench Press","Chins Up", "Military Press","Squat"]
-path_file = "/home/bihut/dev/Proyectos/pyBodyTrack/examples/example_3/video_output_uclidean.json"
+path_file = "/home/bihut/dev/Proyectos/pyBodyTrack/examples/example_3/video_output_euclidean.json"
 plot_movement_scatter(path_file)

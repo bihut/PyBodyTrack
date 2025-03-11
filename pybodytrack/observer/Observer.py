@@ -27,7 +27,11 @@ class Observer:
 
     def _loop(self):
         while True:
+            print("DENTRO DEL LOOP")
             msg = self.msg_queue.get()
+            print("VALOR DE MSG",msg)
             if msg is None:  # Use None as a signal to stop the loop if desired.
+                print("BUCLE OBSERVER","MSG ES NONE")
                 break
+            print("OBSERVEr","HAY ALGUNMENSAJE")
             self.handleMessage(msg)

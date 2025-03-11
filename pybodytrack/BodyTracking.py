@@ -119,6 +119,68 @@ class BodyTracking:
 
     def start(self, observer=None, fps=None):
         """
+        Starts processing and displaying video frames...
+        """
+        used_fps = fps if fps is not None else self.fps
+        last_index = 0  # Para llevar el seguimiento de las filas enviadas
+        frame_count = 0  # Contador de cuadros procesados
+
+        self.processing_thread.start()
+
+        while self.cap.isOpened():
+            frame_count += 1  # Incrementamos el contador en cada iteración
+            loop_start_time = time.time()
+            ret, frame = self.cap.read()
+            if not ret:
+                break
+
+            # Actualizamos el frame para procesamiento
+            with self.latest_frame_lock:
+                self.frame_to_process = frame.copy()
+                display_frame = (self.latest_processed_frame.copy()
+                                 if self.latest_processed_frame is not None
+                                 else frame.copy())
+
+            # Verificar si se estableció un tiempo final (modo video)
+            if self.endtime is not None:
+                current_msec = self.cap.get(cv2.CAP_PROP_POS_MSEC)
+                if current_msec > self.endtime * 1000:
+                    break
+
+            # Mostrar el frame
+            cv2.imshow("Pose Tracking", display_frame)
+
+            # Recuperar el DataFrame con todos los landmarks hasta el momento
+            df_all = self.getData()
+            #print("GETA LL DATA ",df_all)
+            # Recuperar el DataFrame con todos los landmarks hasta el momento
+            df_all = self.getData()
+            if df_all is not None and not df_all.empty and len(df_all) > last_index:
+                new_rows = df_all.iloc[last_index:]
+                # Enviar mensaje solo cuando se hayan procesado 'used_fps' cuadros (o un múltiplo)
+                if frame_count % used_fps == 0:
+                    # En este caso, podrías enviar el bloque completo en un solo mensaje:
+                    if observer is not None:
+                        print("MENSAJE ENVIADO OBSERVER")
+                        msg = Message(what=1, obj=new_rows)
+                        observer.sendMessage(msg)
+                    # Actualizamos last_index solo cuando se envía el mensaje,
+                    # de modo que acumulamos todos los nuevos registros hasta ese momento.
+                    last_index = len(df_all)
+
+            elapsed_time = time.time() - loop_start_time
+            remaining_time = self.frame_interval - elapsed_time
+            if remaining_time > 0:
+                time.sleep(remaining_time)
+
+            # Salir al presionar 'q'
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        self.stop()
+
+    def startbackup(self, observer=None, fps=None):
+        """
         Starts processing and displaying video frames. Instead of computing movement,
         this method sends each new frame's landmark data to the observer. The observer
         is responsible for accumulating a fixed number of frames (e.g. 30) and then

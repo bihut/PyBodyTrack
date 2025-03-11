@@ -15,26 +15,33 @@ from pybodytrack.methods.methods import Methods
 from pybodytrack.observer.Observer import Observer
 
 res_json=[]
+
 class CustomObserver(Observer):
+
     def __init__(self, frame_block_size=30):
         """
         Parameters:
             frame_block_size (int): Number of frames to accumulate before processing.
         """
         super().__init__()
+        self.conttime = None
+        self.cont_packages = 0
         self.frame_block_size = frame_block_size
         self.buffer = []  # Buffer to store incoming landmark data
 
     def handleMessage(self, msg):
+        print("MENSAJE RECIBIDO HANDLE")
         if msg.what == 1:  # New landmark data received
-            self.buffer.append(msg.obj)
-            if len(self.buffer) >= self.frame_block_size:
+            #self.buffer = []  # Buffer to store incoming landmark data
+            #self.buffer.append(msg.obj)
+            #if len(self.buffer) >= self.frame_block_size:
                 # Get a block of frames (non-overlapping)
-                block = self.buffer[:self.frame_block_size]
+            #block = self.buffer[:self.frame_block_size]
                 # Remove the processed frames from the buffer
-                self.buffer = self.buffer[self.frame_block_size:]
+            #self.buffer = self.buffer[self.frame_block_size:]
                 # Offload processing to another thread
-                threading.Thread(target=self.processBuffer, args=(block,), daemon=True).start()
+            block = msg.obj
+            threading.Thread(target=self.processBuffer, args=(block,), daemon=True).start()
         else:
             # Handle other message types if needed
             print("Received error message:", msg.obj)
@@ -46,19 +53,29 @@ class CustomObserver(Observer):
         Converts the block (list of rows) into a DataFrame and applies any heavy processing
         (for example, computing movement). This runs in a separate thread so that the video loop is not blocked.
         """
+        print("MENSAJE RECIBIDO HANDLER","PROCESAR")
+        if self.conttime is None:
+            self.conttime = time.time()
         df_buffer = pd.DataFrame(block)
-        start_time = df_buffer.iloc[0]['timestamp']
-        end_time = df_buffer.iloc[-1]['timestamp']
+        #start_time = df_buffer.iloc[0]['timestamp']
+        #end_time = df_buffer.iloc[-1]['timestamp']
         # Perform heavy processing here (for instance, calculating movement)
         # Example: movement = Methods.euclidean_distance(df_buffer)
         # For demonstration, we simply print the information:
-        print(f"Processing block from {start_time} to {end_time} with {len(df_buffer)} frames.")
-        movement = Methods.euclidean_distance(df_buffer)
+        self.cont_packages += self.frame_block_size
+        #print(f"Processing block from {start_time} to {end_time} with {len(df_buffer)} frames.")
+        movement = Methods.euclidean_distance(df_buffer, filter=True, distance_threshold=0.0)
         print("Cantidad de movimiento euclidean:",movement)
-        aux = {"time":(end_time-start_time),"movement":movement}
-        res_json.append(aux)
+        nmi = body_tracking.normalized_movement_index(movement, len(bodyparts.STANDARD_LANDMARKS))
+        print("NMI:",nmi)
+        res = {"time":self.cont_packages,"movement":movement,"nmi":nmi}
+        res_json.append(res)
+        print("PAquete ",self.cont_packages)
 
-path_video_before = "/home/bihut/Documentos/UGR/Papers/pyBodyTrack-SoftwareX/ExperimentosVideos/Experimento3/caidas2.mp4"
+        self.conttime = time.time()
+
+
+path_video_before = "/home/bihut/Documentos/UGR/Papers/pyBodyTrack-SoftwareX/ExperimentosVideos/Experimento3/andres.mp4"
 
 if not os.path.exists(path_video_before):
     print("El no fichero existe")
@@ -67,18 +84,21 @@ body_tracking = BodyTracking(processor=PoseProcessor.MEDIAPIPE, mode=VideoMode.V
                              path_video=path_video_before,
                              selected_landmarks=bodyparts.STANDARD_LANDMARKS)
 
-start = 1
-end = 7
+#start = 1
+#end = 7
 
 
 
-body_tracking.set_times(start, end)
-observer = CustomObserver()
+#body_tracking.set_times(start, end)
+fps=8
+observer = CustomObserver(frame_block_size=fps)
 observer.startLoop()
 tracker_thread = threading.Thread(target=body_tracking.start, kwargs={
     'observer': observer,
-    'fps': 15
+    'fps': fps
 })
+conttime = time.time()
+cont_packages=0
 tracker_thread.start()
 try:
     while tracker_thread.is_alive():
@@ -95,7 +115,7 @@ if tracker_thread.is_alive():
     print("Tracker thread still alive. Force stopping...")
     body_tracking.stop()
 
-output_res = output + "/video_output_uclidean.json"
+output_res = output + "/video_output_euclidean.json"
 path_frame = output + "/video_frame.jpg"
 if os.path.exists(output_res):
     os.remove(output_res)

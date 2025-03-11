@@ -55,6 +55,32 @@ def plot_exercise_metrics(json_files, metric):
     plt.savefig('/home/bihut/dev/Proyectos/pyBodyTrack/examples/example_4/chart4.png', dpi=600, bbox_inches='tight')
     plt.tight_layout()
     plt.show()
+def sort_json_files_by_attribute(json_files, attribute):
+    """
+    Reads a list of JSON files, extracts the given attribute value,
+    and returns the files sorted in ascending order of that attribute.
+
+    :param json_files: List of JSON file paths.
+    :param attribute: The JSON attribute to sort by.
+    :return: List of tuples (file_path, attribute_value) sorted by the attribute.
+    """
+    files_with_attr = []
+
+    for file_path in json_files:
+        try:
+            with open(file_path, "r") as file:
+                data = json.load(file)
+                if attribute in data:  # Ensure the attribute exists in the JSON structure
+                    files_with_attr.append((file_path, data[attribute]))
+                else:
+                    print(f"⚠️ Warning: '{attribute}' key not found in {file_path}")
+        except Exception as e:
+            print(f"❌ Error reading {file_path}: {e}")
+
+    # Sort the list by the specified attribute value
+    sorted_files = sorted(files_with_attr, key=lambda x: x[1])
+
+    return [file[0] for file in sorted_files]  # Return only file paths
 
 
 def convert_json_to_frame_paths(json_files):

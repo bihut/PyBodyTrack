@@ -18,6 +18,16 @@ STANDARD_LANDMARKS_YOLO = [
             "left_wrist", "right_wrist", "left_hip", "right_hip",
             "left_knee", "right_knee", "left_ankle", "right_ankle"
         ]
+
+STANDARD_LANDMARKS_OPENPOSE = [
+    "nose", "neck",
+    "right_shoulder", "right_elbow", "right_wrist",
+    "left_shoulder", "left_elbow", "left_wrist",
+    "right_hip", "right_knee", "right_ankle",
+    "left_hip", "left_knee", "left_ankle",
+    "right_eye", "left_eye", "right_ear", "left_ear"
+]
+
 # Landmarks for the head (timestamp omitted)
 HEAD_LANDMARKS = [
     "nose", "left_eye_inner", "left_eye", "left_eye_outer",

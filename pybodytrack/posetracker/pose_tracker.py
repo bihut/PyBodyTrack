@@ -45,8 +45,8 @@ class PoseTracker:
             self.data = []
 
         self.data.append(cleaned_data)
-        print("LEN ", len(self.data))
-        print("LEN COLS:",len(cleaned_data))
+        #print("LEN ", len(self.data))
+        #print("LEN COLS:",len(cleaned_data))
     def get_dataframe(self):
         """Returns a DataFrame with properly formatted column names."""
         if not self.data or self.data is None:
@@ -58,7 +58,7 @@ class PoseTracker:
         # 📌 Convertir lista de diccionarios a DataFrame
         try:
             error=1
-            print("DATA TYPE",type(self.data))
+            #print("DATA TYPE",type(self.data))
             df = pd.DataFrame(self.data)
             lista = self.data
 
