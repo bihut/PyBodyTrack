@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pybodytrack.methods package &#8212; PyBodyTrack 2025.3.3 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=b1a5c91c"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="pybodytrack-methods-package">
+<h1>pybodytrack.methods package<a class="headerlink" href="#pybodytrack-methods-package" title="Link to this heading">¶</a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading">¶</a></h2>
+</section>
+<section id="module-pybodytrack.methods.methods">
+<span id="pybodytrack-methods-methods-module"></span><h2>pybodytrack.methods.methods module<a class="headerlink" href="#module-pybodytrack.methods.methods" title="Link to this heading">¶</a></h2>
+<p>PyBodyTrack - A Python library for motion quantification in videos.</p>
+<p>Author: Angel Ruiz Zafra
+License: Apache 2.0 License
+Version: 2025.3.2
+Repository: <a class="reference external" href="https://github.com/bihut/PyBodyTrack">https://github.com/bihut/PyBodyTrack</a>
+Created on 4/2/25 by Angel Ruiz Zafra</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pybodytrack.methods.methods.</span></span><span class="sig-name descname"><span class="pre">Methods</span></span><a class="headerlink" href="#pybodytrack.methods.methods.Methods" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.angular_displacement">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">angular_displacement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.angular_displacement" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the total angular displacement of body landmarks between consecutive frames.</p>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each coordinate (x, y, z) time series
+to smooth out noise before computing the angular displacement.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order: &lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<p>For each landmark and for each frame (except the first and last), the function computes the angle
+(in radians) between the landmark’s position in the previous frame and its position in the next frame.
+The total angular displacement is the sum of these angles over all frames and landmarks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply Kalman filtering if True.</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total angular displacement (in radians).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.chebyshev_distance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">chebyshev_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.chebyshev_distance" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the total Chebyshev distance of body landmarks between consecutive frames.</p>
+<dl class="simple">
+<dt>This method supports two modes:</dt><dd><ul class="simple">
+<li><p>If filter is True, it applies a Kalman filter to each coordinate and then computes
+the Chebyshev distance, optionally ignoring small differences below distance_threshold.</p></li>
+<li><p>If filter is False, it computes the pure Chebyshev distance using the raw data.</p></li>
+</ul>
+</dd>
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, four columns in order: &lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply filtering (Kalman filter and threshold) if True.</p></li>
+<li><p><strong>distance_threshold</strong> – Minimum Chebyshev distance to be considered valid movement when filtering.
+(Set to 0.0 to disable thresholding.)</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of Chebyshev distances between consecutive frames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.differential_acceleration">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">differential_acceleration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.differential_acceleration" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the total movement based on differential acceleration of body landmarks between consecutive frames.</p>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each coordinate (x, y, and z) time series to smooth
+out noise before computing velocities and acceleration differences.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order:
+&lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<p>The method constructs an array of shape (n_frames, num_landmarks, 3) using the x, y, and z values,
+computes the velocities between frames (multiplied by fps), then computes the difference in velocity
+(acceleration) and sums the absolute differences across all frames and landmarks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>fps</strong> – Frames per second of the video.</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply Kalman filtering to the coordinate data.</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of acceleration differences across all frames and landmarks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.euclidean_distance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">euclidean_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.euclidean_distance" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the total Euclidean distance of body landmarks between consecutive frames.</p>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each coordinate (x, y, z)
+and small movements below <cite>distance_threshold</cite> are ignored.
+When False, the pure Euclidean distance is computed from raw data.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order: &lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply Kalman filtering and thresholding if True.</p></li>
+<li><p><strong>distance_threshold</strong> – Minimum Euclidean distance change to be considered valid movement when filtering.</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of Euclidean distances between consecutive frames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.euclidean_distancebackup">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">euclidean_distancebackup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.euclidean_distancebackup" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the total Euclidean distance of body landmarks between consecutive frames.</p>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each coordinate (x, y, z)
+and small movements below <cite>distance_threshold</cite> are ignored.
+When False, the pure Euclidean distance is computed from raw data.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order: &lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply Kalman filtering and thresholding if True.</p></li>
+<li><p><strong>distance_threshold</strong> – Minimum Euclidean distance change to be considered valid movement when filtering.</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of Euclidean distances between consecutive frames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.euclidean_distanceborrar">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">euclidean_distanceborrar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.euclidean_distanceborrar" title="Link to this definition">¶</a></dt>
+<dd><p>Calculates the total Euclidean movement (sum of distances between consecutive frames)
+and returns a DataFrame with the movement details for each pair of frames along with their timestamps.</p>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each coordinate (x, y, z) and
+movements smaller than <cite>distance_threshold</cite> are ignored.
+When False, the pure Euclidean distance is computed using raw data.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order: &lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame containing the landmark data.</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply Kalman filtering and distance thresholding.</p></li>
+<li><p><strong>distance_threshold</strong> – Minimum Euclidean distance change to be considered a valid movement when filtering.</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>A tuple (total_movement, movement_df) where:
+- total_movement is the sum of the Euclidean distances between consecutive frames.
+- movement_df is a DataFrame with columns:</p>
+<blockquote>
+<div><blockquote>
+<div><p>’timestamp_start’, ‘timestamp_end’, and ‘movement’,</p>
+</div></blockquote>
+<p>representing the movement (sum of distances for each landmark) between each pair of frames.</p>
+</div></blockquote>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.farneback_optical_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">farneback_optical_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">image_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(100,</span> <span class="pre">100)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.farneback_optical_flow" title="Link to this definition">¶</a></dt>
+<dd><p>Compute total movement using the Farnebäck optical flow method.</p>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each numeric landmark column
+(x, y, z, and confidence) to smooth out noise before converting the landmarks
+into a synthetic image. When False, raw data is used.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>The remaining columns are numeric and grouped in blocks of 4 for each landmark,
+in the order: &lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+<dt>For each consecutive pair of frames (rows), the function:</dt><dd><ol class="arabic simple">
+<li><p>Excludes the timestamp column.</p></li>
+<li><p>Converts the numeric landmark data into a synthetic image.</p></li>
+<li><p>Converts the image to grayscale.</p></li>
+<li><p>Computes the optical flow between the two images using the Farnebäck method.</p></li>
+<li><p>Accumulates the total movement as the sum of the flow magnitude.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame containing landmark data.</p></li>
+<li><p><strong>image_size</strong> – Tuple (width, height) for the synthetic image.</p></li>
+<li><p><strong>filter</strong> – Boolean flag; if True, apply Kalman filtering to smooth the landmark data.</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of optical flow magnitudes over all frame pairs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.lucas_kanade_optical_flow">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lucas_kanade_optical_flow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.lucas_kanade_optical_flow" title="Link to this definition">¶</a></dt>
+<dd><p>Compute total movement using the Lucas-Kanade optical flow method.</p>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each coordinate (x, y, z)
+to smooth out noise before computing the velocity, and then the velocity magnitude
+is computed using the simplified Lucas-Kanade method. When False, the raw data is used.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order:
+&lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+<dt>The method iterates over frames (excluding the first and last) and for each landmark computes:</dt><dd><p>velocity = (next_point - prev_point) / 2</p>
+</dd>
+</dl>
+<p>Then the magnitude of the velocity is added to the total movement.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>window_size</strong> – Window size for smoothing (not used in this simplified version).</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply Kalman filtering if True.</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of velocity magnitudes across all frames and landmarks.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.mahalanobis_distance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mahalanobis_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.mahalanobis_distance" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the total Mahalanobis distance of body landmarks between consecutive frames,
+with an option to apply Kalman filtering to reduce noise.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order: &lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each coordinate (x, y, and z) for each landmark.
+An optional distance_threshold can be used to ignore small changes (set to 0.0 to disable thresholding).</p>
+<p>The method builds an array of shape (n_frames, num_landmarks, 3) using the x, y, and z values,
+computes the global covariance matrix (across all landmarks and frames), and then sums the Mahalanobis
+distances between consecutive frames for each landmark.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>filter</strong> – Boolean flag indicating whether to apply Kalman filtering.</p></li>
+<li><p><strong>distance_threshold</strong> – Minimum Mahalanobis distance to be considered as valid movement.
+(Measured in the same units as the landmark coordinates.)</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of Mahalanobis distances between consecutive frames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.manhattan_distance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">manhattan_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.manhattan_distance" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the total Manhattan distance of body landmarks between consecutive frames.</p>
+<p>When <cite>filter</cite> is True, a Kalman filter is applied to each coordinate (x, y, z)
+and movements below <cite>distance_threshold</cite> are ignored.
+When False, the pure Manhattan distance is computed from raw data.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order: &lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply Kalman filtering and thresholding if True.</p></li>
+<li><p><strong>distance_threshold</strong> – Minimum Manhattan distance change to be considered valid movement when filtering.</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of Manhattan distances between consecutive frames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pybodytrack.methods.methods.Methods.minkowski_distance">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">minkowski_distance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">distance_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-05</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pybodytrack.methods.methods.Methods.minkowski_distance" title="Link to this definition">¶</a></dt>
+<dd><p>Calculate the total Minkowski distance of body landmarks between consecutive frames,
+optionally applying a Kalman filter and a threshold to remove small noise-induced movements.</p>
+<dl class="simple">
+<dt>Assumes the DataFrame has the following structure:</dt><dd><ul class="simple">
+<li><p>The first column is ‘timestamp’.</p></li>
+<li><p>For each landmark, there are four columns in order:
+&lt;landmark&gt;_x, &lt;landmark&gt;_y, &lt;landmark&gt;_z, &lt;landmark&gt;_confidence.</p></li>
+</ul>
+</dd>
+</dl>
+<p>When filter is True, a Kalman filter is applied to each coordinate (x, y, and z) and any
+distance value below the distance_threshold is ignored. When filter is False, the pure Minkowski
+distance is computed using the raw data.</p>
+<dl class="simple">
+<dt>The Minkowski distance is computed using the formula:</dt><dd><p>d = (<a href="#id1"><span class="problematic" id="id2">|</span></a>dx|^p + <a href="#id3"><span class="problematic" id="id4">|</span></a>dy|^p + <a href="#id5"><span class="problematic" id="id6">|</span></a>dz|^p)^(1/p)</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>df</strong> – Pandas DataFrame with the landmark data.</p></li>
+<li><p><strong>p</strong> – Order of the Minkowski distance (e.g., p=1 for Manhattan, p=2 for Euclidean).</p></li>
+<li><p><strong>filter</strong> – Boolean flag to apply Kalman filtering and thresholding if True.</p></li>
+<li><p><strong>distance_threshold</strong> – Minimum Minkowski distance change to be considered valid movement.
+(Measured in the same units as the landmark coordinates.)</p></li>
+<li><p><strong>Q</strong> – Process variance for the Kalman filter.</p></li>
+<li><p><strong>R</strong> – Measurement variance for the Kalman filter.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Total movement as the sum of Minkowski distances between consecutive frames.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-pybodytrack.methods">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pybodytrack.methods" title="Link to this heading">¶</a></h2>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">PyBodyTrack</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Angel Ruiz Zafra.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/pybodytrack.methods.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
