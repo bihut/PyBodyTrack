@@ -1,5 +1,4 @@
 import cv2
-import torch
 import numpy as np
 from ultralytics import YOLO
 
@@ -17,7 +16,7 @@ class YoloProcessor:
             model_path (str, opcional): Ruta al modelo YOLO personalizado. Si es None, usa 'yolov8n-pose.pt'.
             device (str, opcional): Dispositivo a usar ('cuda' o 'cpu'). Si es None, se detecta automáticamente.
         """
-        self.device = device if device else ("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = device if device else ("cpu")
         self.model_path = model_path if model_path else "yolov8n-pose.pt"
 
         self.model = YOLO(self.model_path)

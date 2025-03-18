@@ -1,0 +1,8 @@
+mediapipe==0.10.21
+numpy==2.2.4
+opencv-contrib-python==4.11.0.86
+opencv-python==4.11.0.86
+pandas==2.2.3
+scipy==1.15.2
+setuptools==44.1.1
+ultralytics==8.3.78
