@@ -5,6 +5,44 @@ PyBodyTrack is a library that simplifies and enhances
 movement estimation and quantification. 
 It allows for the analysis of either the entire body or specific regions using various mathematical approaches, both from pre-recorded videos and real-time sources
 
+<table width="100%">
+  <tr>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_1" width="100%" height="200">
+    </td>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_2" width="100%" height="200">
+    </td>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_3" width="100%" height="200">
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_4" width="100%" height="200">
+    </td>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_5" width="100%" height="200">
+    </td>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_6" width="100%" height="200">
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_7" width="100%" height="200">
+    </td>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_8" width="100%" height="200">
+    </td>
+    <td width="33%" align="center">
+      <img src="URL_IMAGEN_9" width="100%" height="200">
+    </td>
+  </tr>
+</table>
+
+
+
 # **Installation Guide**
 
 This guide explains how to install and use **PyBodyTrack**, either from **PyPI** or directly from **GitHub**.
