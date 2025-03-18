@@ -8,35 +8,35 @@ It allows for the analysis of either the entire body or specific regions using v
 <table width="100%">
   <tr>
     <td width="33%" align="center">
-      <img src="URL_IMAGEN_1" width="100%" height="200">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image1.png?raw=true" width="100%" >
     </td>
     <td width="33%" align="center">
-      <img src="URL_IMAGEN_2" width="100%" height="200">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image2.png?raw=true" width="100%" >
     </td>
     <td width="33%" align="center">
-      <img src="URL_IMAGEN_3" width="100%" height="200">
-    </td>
-  </tr>
-  <tr>
-    <td width="33%" align="center">
-      <img src="URL_IMAGEN_4" width="100%" height="200">
-    </td>
-    <td width="33%" align="center">
-      <img src="URL_IMAGEN_5" width="100%" height="200">
-    </td>
-    <td width="33%" align="center">
-      <img src="URL_IMAGEN_6" width="100%" height="200">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image3.png?raw=true" width="100%" >
     </td>
   </tr>
   <tr>
     <td width="33%" align="center">
-      <img src="URL_IMAGEN_7" width="100%" height="200">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image4.png?raw=true" width="100%" >
     </td>
     <td width="33%" align="center">
-      <img src="URL_IMAGEN_8" width="100%" height="200">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image5.png?raw=true" width="100%" >
     </td>
     <td width="33%" align="center">
-      <img src="URL_IMAGEN_9" width="100%" height="200">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image6.png?raw=true" width="100%" >
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image7.png?raw=true" width="100%" >
+    </td>
+    <td width="33%" align="center">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image8.png?raw=true" width="100%" >
+    </td>
+    <td width="33%" align="center">
+      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image9.png?raw=true" width="100%" >
     </td>
   </tr>
 </table>
