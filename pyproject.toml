@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyBodyTrack"
-version = "2025.2.2"
+version = "2025.3.1"
 authors = [{name = "Angel Ruiz Zafra", email = "angelrzafra@gmail.com"}]
 description = "A Python library for multi-algorithm motion quantification and tracking in videos"
 readme = "README.md"

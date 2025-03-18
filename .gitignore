@@ -1,0 +1,34 @@
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$PYTHONLEGACYWINDOWSSTDIO
+
+# Virtual environments
+venv/
+.env/
+.venv/
+env/
+
+# Dependencias generadas por pip
+*.egg-info/
+*.egg
+*.whl
+
+# Logs
+*.log
+*.out
+*.err
+logs/
+debug.log
+
+# Archivos de caché
+*.sqlite3
+*.db
+*.pdb
+.cache/
+
+# PyCharm
+.idea/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
