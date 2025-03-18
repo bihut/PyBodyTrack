@@ -1,5 +1,15 @@
+"""
+pyBodyTrack - A Python package for motion quantification in videos.
+
+Author: Angel Ruiz Zafra
+License: MIT License
+Version: 2025.2.1
+Repository: https://github.com/bihut/pyBodyTrack
+Created on 4/2/25 by Angel Ruiz Zafra
+"""
 import cv2
 import numpy as np
+from pybodytrack.bodyparts import body_parts as bodyparts
 import pyopenpose as op
 
 class OpenPoseProcessor:
@@ -17,14 +27,7 @@ class OpenPoseProcessor:
         self.opWrapper.start()
 
         # 📌 OpenPose detecta 25 keypoints
-        self.STANDARD_LANDMARKS = [
-            "nose", "neck", "right_shoulder", "right_elbow", "right_wrist",
-            "left_shoulder", "left_elbow", "left_wrist", "mid_hip",
-            "right_hip", "right_knee", "right_ankle", "left_hip",
-            "left_knee", "left_ankle", "right_eye", "left_eye",
-            "right_ear", "left_ear", "left_big_toe", "left_small_toe",
-            "left_heel", "right_big_toe", "right_small_toe", "right_heel"
-        ]
+        self.STANDARD_LANDMARKS = bodyparts.STANDARD_LANDMARKS_OPENPOSE
 
         # 📌 Conexiones del esqueleto en OpenPose
         self.SKELETON_CONNECTIONS = [

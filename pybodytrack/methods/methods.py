@@ -10,8 +10,6 @@ Created on 4/2/25 by Angel Ruiz Zafra
 
 import numpy as np
 import pandas as pd
-import scipy.spatial.distance as dist
-from scipy.signal import convolve2d
 from scipy.spatial.distance import mahalanobis
 import cv2
 class Methods:
@@ -141,7 +139,6 @@ class Methods:
         total_movement = 0.0
         movements = []  # List to store movement details for each pair of frames
 
-        print("EUCLIDEAN: ",len(df))
         columns = list(df.columns)
         landmark_columns = columns[1:]  # Exclude the 'timestamp' column
         num_landmarks = len(landmark_columns) // 4

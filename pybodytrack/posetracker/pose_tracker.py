@@ -1,5 +1,12 @@
-import sys
+"""
+pyBodyTrack - A Python package for motion quantification in videos.
 
+Author: Angel Ruiz Zafra
+License: MIT License
+Version: 2025.2.1
+Repository: https://github.com/bihut/pyBodyTrack
+Created on 4/2/25 by Angel Ruiz Zafra
+"""
 import pandas as pd
 import numpy as np
 import time
@@ -41,56 +48,47 @@ class PoseTracker:
             cleaned_data[landmark] = pose_data.get(landmark, (np.nan, np.nan, 0, np.nan))  # 📌 Z = 0 para YOLO
 
         if self.data is None:
-            print("ERA NONE")
             self.data = []
 
         self.data.append(cleaned_data)
-        #print("LEN ", len(self.data))
-        #print("LEN COLS:",len(cleaned_data))
     def get_dataframe(self):
         """Returns a DataFrame with properly formatted column names."""
         if not self.data or self.data is None:
-            print("❌ No hay datos en self.data. Algo está fallando en la recolección de datos.")
+            print("❌ self.data is empty.")
             return pd.DataFrame()
 
-        error=0
         lista = None
         # 📌 Convertir lista de diccionarios a DataFrame
         try:
-            error=1
-            #print("DATA TYPE",type(self.data))
+
             df = pd.DataFrame(self.data)
             lista = self.data
 
             # 📌 Separar los valores de los landmarks en columnas individuales
             landmark_dfs = []
             for landmark in self.selected_landmarks:
-                error=2
+
                 if landmark in df:
-                    error=3
+
                     landmark_df = pd.DataFrame(df[landmark].tolist(), columns=[
                         f"{landmark}_x", f"{landmark}_y", f"{landmark}_z", f"{landmark}_confidence"
                     ])
-                    error=4
+
                     landmark_dfs.append(landmark_df)
                 else:
-                    error=5
+
                     empty_df = pd.DataFrame(np.nan, index=df.index, columns=[
                         f"{landmark}_x", f"{landmark}_y", f"{landmark}_z", f"{landmark}_confidence"
                     ])
-                    error=6
+
                     landmark_dfs.append(empty_df)
 
             # 📌 Concatenar todas las columnas en un solo DataFrame optimizado
-            error =7
+
             df_final = pd.concat([df[["timestamp"]]] + landmark_dfs, axis=1)
 
             return df_final
         except Exception as e:
-            print("Ha fallado:", str(e))
-            print("ERROR:",error)
-            print(type(lista))  # Verifica que sea una lista o un diccionario válido
-            #print(len(lista))  # Verifica la longitud
             if isinstance(lista, list):
                 print([len(item) for item in lista if
                        isinstance(item, list)])  # Verifica la longitud de las listas internas
@@ -102,6 +100,6 @@ class PoseTracker:
         df = self.get_dataframe()
         if not df.empty:
             df.to_csv(filename, index=False)
-            print(f"✅ Datos guardados en {filename}")
+            print(f"✅ Data saved in {filename}")
         else:
-            print("❌ No se generaron datos en el DataFrame.")
+            print("❌ Empty dataframe.")

@@ -1,9 +1,15 @@
+"""
+pyBodyTrack - A Python package for motion quantification in videos.
+
+Author: Angel Ruiz Zafra
+License: MIT License
+Version: 2025.2.1
+Repository: https://github.com/bihut/pyBodyTrack
+Created on 4/2/25 by Angel Ruiz Zafra
+"""
 import cv2
 import time
 import threading
-
-import pandas as pd
-
 from pybodytrack.enums.PoseProcessor import PoseProcessor
 from pybodytrack.enums.VideoMode import VideoMode
 from pybodytrack.posetracker.pose_tracker import PoseTracker
@@ -161,7 +167,6 @@ class BodyTracking:
                 if frame_count % used_fps == 0:
                     # En este caso, podrías enviar el bloque completo en un solo mensaje:
                     if observer is not None:
-                        print("MENSAJE ENVIADO OBSERVER")
                         msg = Message(what=1, obj=new_rows)
                         observer.sendMessage(msg)
                     # Actualizamos last_index solo cuando se envía el mensaje,
