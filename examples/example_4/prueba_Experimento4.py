@@ -55,7 +55,6 @@ except KeyboardInterrupt:
     body_tracking.stop()
 
 # Detener el procesamiento correctamente
-body_tracking.stop()
 tracker_thread.join(timeout=5)
 if tracker_thread.is_alive():
     print("Tracker thread still alive. Force stopping...")

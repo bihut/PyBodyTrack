@@ -96,8 +96,7 @@ with open(output_res, "w", encoding="utf-8") as file:
     json.dump(res_json, file, indent=4)  # `indent=4` para formato legible
 
 body_tracking.save_random_frame(path_frame)
-#print(video['output'])
-#print(video['output']+"_frame.jpg")
+
 print("Terminado con ",name_video)
 print("-------------------")
 try:
@@ -109,57 +108,3 @@ try:
 except:
     pass
 time.sleep(1)
-if 1==1:
-    sys.exit()
-
-path_videos = "/home/bihut/Documentos/UGR/Papers/pyBodyTrack - Software X/Experimentos Videos/Experimento1/Experimento1"
-video = "Barbell_bicep_curl 10.mp4"
-path_frame = path_videos+"/"+video+"_frame.jpg"
-output_res = path_videos+"/"+video+"_output_cheby.json"
-res_json = {}
-
-#path_videos = "/home/bihut/Imágenes/egipto/video7.mp4"
-landmarks = bodyparts.UPPER_BODY_LANDMARKS
-res_json["landmarks"] = "Upper Body"
-#observer = CustomObserver()
-#observer.startLoop()
-
-body_tracking = BodyTracking(processor=PoseProcessor.MEDIAPIPE, mode=VideoMode.VIDEOS, path_video=path_videos+"/"+video,
-                             selected_landmarks=landmarks)
-#body_tracking.start()
-#body_tracking.set_times(2,17)
-
-#FUNCIONALIDAD - METER VARIOS VIDEOS Y QUE LOS ORDENE POR CANTIDAD DE MOVIMIENTO
-#FUNCIONALIDAD - METER DOS VIDEOS Y DECIR CUAL TIENE MAS MOVIMIENTO y LA PROPORCION
-tracker_thread = threading.Thread(target=body_tracking.start, kwargs={
-    'observer': None,
-    'fps': 30
-})
-tracker_thread.start()
-
-try:
-    while tracker_thread.is_alive():
-        time.sleep(1)  # Main thread idle loop
-except KeyboardInterrupt:
-    print("Stopping tracking...")
-    body_tracking.stop()
-
-tracker_thread.join()
-df = body_tracking.getData()
-movement = Methods.chebyshev_distance(df,filter=True,distance_threshold=2.0)
-norm=body_tracking.normalized_movement_index(movement,len(landmarks))
-res_json['ram'] = movement
-res_json['nmi'] = norm
-#print("normalized_movement_index:",norm)
-movl=body_tracking.movement_per_landmark(movement, len(bodyparts.STANDARD_LANDMARKS))
-res_json['mol'] = movl
-aux = body_tracking.movement_per_frame(movement)
-res_json['mof'] = aux
-aux= body_tracking.movement_per_second(movement)
-res_json['mos'] = aux
-
-# Guardar en un fichero JSON
-with open(output_res, "w", encoding="utf-8") as file:
-    json.dump(res_json, file, indent=4)  # `indent=4` para formato legible
-
-body_tracking.save_random_frame(path_frame)

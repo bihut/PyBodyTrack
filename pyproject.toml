@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyBodyTrack"
-version = "2025.2.1"
+version = "2025.2.2"
 authors = [{name = "Angel Ruiz Zafra", email = "angelrzafra@gmail.com"}]
 description = "A Python library for multi-algorithm motion quantification and tracking in videos"
 readme = "README.md"
 license = {text = "Apache-2.0"}
-dependencies = ["numpy", "opencv-python", "scipy","mediapipe","pandas","ultralytics","opencv-contrib-python","setuptools"]
+dependencies = ["numpy==2.2.4", "opencv-python==4.11.0.86", "scipy==1.15.2","mediapipe==0.10.21","pandas==2.2.3","ultralytics==8.3.78","opencv-contrib-python==4.11.0.86","setuptools==44.1.1"]
 
 [project.urls]
 "Homepage" = "https://github.com/bihut/pyBodyTrack"
