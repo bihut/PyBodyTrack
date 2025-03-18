@@ -1,9 +1,9 @@
 # PyBodyTrack
 <img src="https://github.com/bihut/pyBodyTrack/blob/main/logo.png?raw=true" alt="Ejemplo" width="300"/>
 
-PyBodyTrack is a library that simplifies and enhances 
+**PyBodyTrack is a library that simplifies and enhances 
 movement estimation and quantification. 
-It allows for the analysis of either the entire body or specific regions using various mathematical approaches, both from pre-recorded videos and real-time sources
+It allows for the analysis of either the entire body or specific regions using various mathematical approaches, both from pre-recorded videos and real-time sources**
 
 <table width="100%">
   <tr>
