@@ -1,4 +1,4 @@
-# pyBodyTrack
+# PyBodyTrack
 <img src="https://github.com/bihut/pyBodyTrack/blob/main/logo.png?raw=true" alt="Ejemplo" width="300"/>
 
 PyBodyTrack is a library that simplifies and enhances 
