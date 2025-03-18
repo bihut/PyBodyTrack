@@ -8,35 +8,35 @@ It allows for the analysis of either the entire body or specific regions using v
 <table width="100%">
   <tr>
     <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image1.png?raw=true" width="100%" >
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image1.png?raw=true" width="100%" >
     </td>
     <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image2.png?raw=true" width="100%" >
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image2.png?raw=true" width="100%" >
     </td>
     <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image3.png?raw=true" width="100%" >
-    </td>
-  </tr>
-  <tr>
-    <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image4.png?raw=true" width="100%" >
-    </td>
-    <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image5.png?raw=true" width="100%" >
-    </td>
-    <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image6.png?raw=true" width="100%" >
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image3.png?raw=true" width="100%" >
     </td>
   </tr>
   <tr>
     <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image7.png?raw=true" width="100%" >
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image4.png?raw=true" width="100%" >
     </td>
     <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image8.png?raw=true" width="100%" >
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image5.png?raw=true" width="100%" >
     </td>
     <td width="33%" align="center">
-      <img src="https://github.com/bihut/pyBodyTrack/blob/main/examples/imgs/image9.png?raw=true" width="100%" >
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image6.png?raw=true" width="100%" >
+    </td>
+  </tr>
+  <tr>
+    <td width="33%" align="center">
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image7.png?raw=true" width="100%" >
+    </td>
+    <td width="33%" align="center">
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image8.png?raw=true" width="100%" >
+    </td>
+    <td width="33%" align="center">
+      <img src="https://github.com/bihut/PyBodyTrack/blob/main/examples/imgs/image9.png?raw=true" width="100%" >
     </td>
   </tr>
 </table>
@@ -84,11 +84,11 @@ If you want to use the latest development version or modify the code, follow the
 ### **2️⃣ Clone the GitHub Repository**
 - Clone the repository to your local machine:
   ```bash
-  git clone https://github.com/yourusername/pybodytrack.git
+  git clone https://github.com/bihut/PyBodyTrack.git
   ```
 - Navigate into the repository folder:
   ```bash
-  cd pybodytrack
+  cd PyBodyTrack
   ```
 
 ---
